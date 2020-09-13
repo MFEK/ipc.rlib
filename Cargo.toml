@@ -1,0 +1,12 @@
+[package]
+name = "mfeq-ipc"
+version = "0.0.0"
+authors = ["Fredrick Brennan <copypaste@kittens.ph>"]
+description = "Modular Font Editor Q (MFEQ) inter-process communication library."
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+# Logging
+log = "0.4.11"
