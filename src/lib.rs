@@ -89,7 +89,7 @@ pub fn module_available(module: &str) -> Available {
                             debug!("Got metadata: {:?}", &md);
                             #[cfg(target_family = "unix")]
                             {
-                                use std::fs::unix::PermissionsExt;
+                                use std::os::unix::fs::PermissionsExt;
                                 if md.permissions().mode() & 0o111 != 0 {
                                     ret = Available::Yes;
                                 }
