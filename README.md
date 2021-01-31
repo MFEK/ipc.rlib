@@ -1,3 +1,3 @@
-# `mfeq-ipc`
+# `mfek-ipc`
 
-Modular Font Editor Q (MFEQ) inter-process communication library. Very alpha, unstable API, unversioned for now.
+Modular Font Editor K (MFEK) inter-process communication library. Very alpha, unstable API, unversioned for now.
