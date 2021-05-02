@@ -110,9 +110,9 @@ pub fn module_available(module: &str) -> Available {
         None => {}
     }
     error!(
-        "Module {:?} is not available. MFEQ is modular software; it will still run but some \
+        "Module {:?} is not available. MFEK is modular software; it will still run but some \
         features will not be available. For the best experience, please install all available \
-        MFEQ modules into your PATH.",
+        MFEK modules into your PATH.",
         module
     );
     ret
@@ -124,11 +124,11 @@ mod tests {
 
     use std::process;
 
-    const QMD: &str = "Qmetadata";
+    const KMD: &str = "MFEKmetadata";
     #[test]
     #[allow(non_snake_case)]
-    fn Qmetadata_available() {
-        assert!(module_available(QMD.into()).assert());
-        assert!(process::Command::new(QMD).status().is_ok());
+    fn MFEKmetadata_available() {
+        assert!(module_available(KMD.into()).assert());
+        assert!(process::Command::new(KMD).status().is_ok());
     }
 }
