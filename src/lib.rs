@@ -43,7 +43,7 @@ impl IPCInfo {
                     match p.parent() {
                         None => None,
                         Some(pp) => {
-                            let ufo = pp.file_name().unwrap().to_string_lossy();
+                            let ufo = pp.file_name().unwrap().to_string_lossy().to_lowercase();
                             if ufo.ends_with(".ufo") || ufo.ends_with(".ufo3") {
                                 Some(pp.to_path_buf())
                             } else {
