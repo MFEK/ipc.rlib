@@ -40,7 +40,7 @@ impl IPCInfo {
         let font = match path.canonicalize().unwrap().parent() {
             None => None,
             Some(p) => {
-                if p.file_name().unwrap() == "glyphs" {
+                if p.file_name().unwrap() == "glyphs" || p.file_name().unwrap().to_str().unwrap().starts_with("glyphs.") {
                     match p.parent() {
                         None => None,
                         Some(pp) => {
