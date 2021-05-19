@@ -20,6 +20,7 @@ impl Available {
     }
 }
 
+#[derive(Debug, Clone, PartialEq)]
 pub struct IPCInfo {
     pub parent_module: String,
     pub font: Option<PathBuf>,
