@@ -66,70 +66,75 @@ impl IPCInfo {
     }
 }
 
-pub fn module_name(module: &str) -> String {
+pub fn module_name(module: &str) -> Vec<String> {
     #[cfg(target_family = "windows")]
-    let module = format!("{}.exe", module);
+    let module = vec![format!("MFEK{}.exe", module), format!("mfek-{}.exe", module)];
+    #[cfg(not(target_family = "windows"))]
+    let module = vec![format!("MFEK{}", module), format!("mfek-{}", module)];
 
-    module.to_string()
+    module
 }
 
-pub fn module_available(module: &str) -> Available {
+pub fn module_available(module: &str) -> (Available, String) {
     let mut ret = Available::No;
-    let module = module_name(module);
-    match env::var_os("PATH") {
-        Some(paths) => {
-            for path in env::split_paths(&paths) {
-                let pb: PathBuf = [path.as_os_str(), &OsString::from(module.clone())]
-                    .iter()
-                    .collect();
-                debug!("Checking {:?} for {:?}", &pb, &module);
-                let omd = fs::metadata(&pb);
-                match omd {
-                    Ok(md) => {
-                        if md.is_file() {
-                            debug!("Got metadata: {:?}", &md);
-                            #[cfg(target_family = "unix")]
-                            {
-                                use std::os::unix::fs::PermissionsExt;
-                                if md.permissions().mode() & 0o111 != 0 {
+    let modules = module_name(module);
+    for mn in modules.iter() {
+        match env::var_os("PATH") {
+            Some(paths) => {
+                for path in env::split_paths(&paths) {
+                    let pb: PathBuf = [path.as_os_str(), &OsString::from(mn.clone())]
+                        .iter()
+                        .collect();
+                    debug!("Checking {:?} for {:?}", &pb, &mn);
+                    let omd = fs::metadata(&pb);
+                    match omd {
+                        Ok(md) => {
+                            if md.is_file() {
+                                debug!("Got metadata: {:?}", &md);
+                                #[cfg(target_family = "unix")]
+                                {
+                                    use std::os::unix::fs::PermissionsExt;
+                                    if md.permissions().mode() & 0o111 != 0 {
+                                        ret = Available::Yes;
+                                    }
+                                }
+                                #[cfg(not(target_family = "unix"))]
+                                {
                                     ret = Available::Yes;
                                 }
-                            }
-                            #[cfg(not(target_family = "unix"))]
-                            {
-                                ret = Available::Yes;
-                            }
-                            info!("{:?} found", &pb);
+                                info!("{:?} found", &pb);
 
-                            return ret;
+                                return (ret, mn.clone());
+                            }
                         }
+                        Err(_) => {}
                     }
-                    Err(_) => {}
                 }
             }
+            None => {}
         }
-        None => {}
     }
     error!(
-        "Module {:?} is not available. MFEK is modular software; it will still run but some \
+        "Module MFEK{:?} is not available. MFEK is modular software; it will still run but some \
         features will not be available. For the best experience, please install all available \
         MFEK modules into your PATH.",
         module
     );
-    ret
+    (ret, String::new())
 }
 
 #[cfg(test)]
 mod tests {
-    use super::module_available;
+    use super::{module_name, module_available};
 
     use std::process;
 
-    const KMD: &str = "MFEKmetadata";
+    const KMD: &str = "metadata";
     #[test]
     #[allow(non_snake_case)]
     fn MFEKmetadata_available() {
-        assert!(module_available(KMD.into()).assert());
-        assert!(process::Command::new(KMD).status().is_ok());
+        let (status, name) = module_available(KMD.into());
+        assert!(status.assert());
+        assert!(process::Command::new(name).status().is_ok());
     }
 }
