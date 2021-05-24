@@ -115,7 +115,7 @@ pub fn module_available(module: &str) -> (Available, String) {
         }
     }
     error!(
-        "Module MFEK{:?} is not available. MFEK is modular software; it will still run but some \
+        "Module MFEK{} is not available. MFEK is modular software; it will still run but some \
         features will not be available. For the best experience, please install all available \
         MFEK modules into your PATH.",
         module
