@@ -119,7 +119,7 @@ impl IPCInfo {
         IPCInfo {
             parent_module: KMDBIN.to_string(),
             font: None,
-            glyph: None
+            glyph: None,
         }
     }
 }
@@ -187,8 +187,8 @@ pub fn module_available(module: &str) -> (Available, String) {
 #[cfg(test)]
 mod tests {
     use super::module_available;
-    use test_env_log::test;
     use std::process;
+    use test_env_log::test;
 
     const KMD: &str = "metadata";
     #[test]
