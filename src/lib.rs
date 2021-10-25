@@ -27,6 +27,44 @@ pub struct IPCInfo {
     pub glyph: Option<PathBuf>,
 }
 
+pub trait InUfo<P: AsRef<Path>> {
+    fn ufo(&self) -> Option<PathBuf>;
+}
+
+impl<P: AsRef<Path>> InUfo<P> for P {
+    fn ufo(&self) -> Option<PathBuf> {
+        fn is_ufo<P: AsRef<Path>>(p: P) -> bool {
+            let ufo = p
+                .as_ref()
+                .file_name()
+                .unwrap()
+                .to_string_lossy()
+                .to_lowercase();
+            ufo.ends_with(".ufo") || ufo.ends_with(".ufo3")
+        }
+        fn is_glyphs<P: AsRef<Path>>(p: P) -> bool {
+            ["glyphs", "glyphs."].iter().any(|g| {
+                p.as_ref()
+                    .file_name()
+                    .unwrap()
+                    .to_str()
+                    .unwrap()
+                    .starts_with(g)
+            })
+        }
+        let parent = self.as_ref().parent().unwrap();
+        if is_ufo(self) {
+            Some(self.as_ref().to_path_buf())
+        } else if is_ufo(parent) {
+            Some(parent.to_path_buf())
+        } else if is_glyphs(parent) {
+            parent.ufo()
+        } else {
+            None
+        }
+    }
+}
+
 impl IPCInfo {
     pub fn from_font_dir(parent: String, path: &impl AsRef<Path>) -> Self {
         IPCInfo {
@@ -36,33 +74,32 @@ impl IPCInfo {
         }
     }
 
-    pub fn from_glif_path(parent: String, path: &impl AsRef<Path>) -> Self {
+    pub fn from_fontinfo_path(parent: String, path: &impl AsRef<Path>) -> Self {
         let font = match path.as_ref().canonicalize().unwrap().parent() {
             None => None,
             Some(p) => {
-                if p.file_name().unwrap() == "glyphs"
-                    || p.file_name()
-                        .unwrap()
-                        .to_str()
-                        .unwrap()
-                        .starts_with("glyphs.")
-                {
-                    match p.parent() {
-                        None => None,
-                        Some(pp) => {
-                            let ufo = pp.file_name().unwrap().to_string_lossy().to_lowercase();
-                            if ufo.ends_with(".ufo") || ufo.ends_with(".ufo3") {
-                                Some(pp.to_path_buf())
-                            } else {
-                                None
-                            }
-                        }
-                    }
+                if path.as_ref().file_name().unwrap() == "fontinfo.plist" {
+                    p.ufo()
                 } else {
                     None
                 }
             }
         };
+        IPCInfo {
+            parent_module: parent,
+            font: font,
+            glyph: Some(path.as_ref().to_path_buf()),
+        }
+    }
+
+    pub fn from_glif_path(parent: String, path: &impl AsRef<Path>) -> Self {
+        let font = path
+            .as_ref()
+            .canonicalize()
+            .unwrap()
+            .parent()
+            .unwrap()
+            .ufo();
 
         IPCInfo {
             parent_module: parent,
