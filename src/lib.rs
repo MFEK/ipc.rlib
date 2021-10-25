@@ -1,3 +1,5 @@
+#![feature(iter_zip, option_result_unwrap_unchecked)]
+
 #[macro_use]
 extern crate log;
 
@@ -5,6 +7,10 @@ use std::ffi::OsString;
 use std::path::{Path, PathBuf};
 
 use std::{env, fs};
+
+pub static KMDBIN: &str = "ipc.rlib";
+
+pub mod helpers;
 
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum Available {
@@ -107,6 +113,15 @@ impl IPCInfo {
             glyph: Some(path.as_ref().to_path_buf()),
         }
     }
+
+    fn new_disconnected() -> Self {
+        warn!("You probably don't want to be making a disconnected IPC info struct. It's only useful for local tests…");
+        IPCInfo {
+            parent_module: KMDBIN.to_string(),
+            font: None,
+            glyph: None
+        }
+    }
 }
 
 pub fn module_name(module: &str) -> Vec<String> {
@@ -171,8 +186,8 @@ pub fn module_available(module: &str) -> (Available, String) {
 
 #[cfg(test)]
 mod tests {
-    use super::{module_available, module_name};
-
+    use super::module_available;
+    use test_env_log::test;
     use std::process;
 
     const KMD: &str = "metadata";
