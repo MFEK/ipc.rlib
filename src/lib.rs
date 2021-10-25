@@ -40,7 +40,13 @@ impl IPCInfo {
         let font = match path.as_ref().canonicalize().unwrap().parent() {
             None => None,
             Some(p) => {
-                if p.file_name().unwrap() == "glyphs" || p.file_name().unwrap().to_str().unwrap().starts_with("glyphs.") {
+                if p.file_name().unwrap() == "glyphs"
+                    || p.file_name()
+                        .unwrap()
+                        .to_str()
+                        .unwrap()
+                        .starts_with("glyphs.")
+                {
                     match p.parent() {
                         None => None,
                         Some(pp) => {
@@ -68,7 +74,10 @@ impl IPCInfo {
 
 pub fn module_name(module: &str) -> Vec<String> {
     #[cfg(target_family = "windows")]
-    let module = vec![format!("MFEK{}.exe", module), format!("mfek-{}.exe", module)];
+    let module = vec![
+        format!("MFEK{}.exe", module),
+        format!("mfek-{}.exe", module),
+    ];
     #[cfg(not(target_family = "windows"))]
     let module = vec![format!("MFEK{}", module), format!("mfek-{}", module)];
 
@@ -125,7 +134,7 @@ pub fn module_available(module: &str) -> (Available, String) {
 
 #[cfg(test)]
 mod tests {
-    use super::{module_name, module_available};
+    use super::{module_available, module_name};
 
     use std::process;
 
