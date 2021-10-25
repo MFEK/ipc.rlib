@@ -28,16 +28,16 @@ pub struct IPCInfo {
 }
 
 impl IPCInfo {
-    pub fn from_font_dir(parent: String, path: &Path) -> Self {
+    pub fn from_font_dir(parent: String, path: &impl AsRef<Path>) -> Self {
         IPCInfo {
             parent_module: parent,
-            font: Some(path.to_path_buf()),
+            font: Some(path.as_ref().to_path_buf()),
             glyph: None,
         }
     }
 
-    pub fn from_glif_path(parent: String, path: &Path) -> Self {
-        let font = match path.canonicalize().unwrap().parent() {
+    pub fn from_glif_path(parent: String, path: &impl AsRef<Path>) -> Self {
+        let font = match path.as_ref().canonicalize().unwrap().parent() {
             None => None,
             Some(p) => {
                 if p.file_name().unwrap() == "glyphs" || p.file_name().unwrap().to_str().unwrap().starts_with("glyphs.") {
@@ -61,7 +61,7 @@ impl IPCInfo {
         IPCInfo {
             parent_module: parent,
             font: font,
-            glyph: Some(path.to_path_buf()),
+            glyph: Some(path.as_ref().to_path_buf()),
         }
     }
 }
