@@ -118,8 +118,8 @@ impl IPCInfo {
         }
     }
 
-    fn new_disconnected() -> Self {
-        warn!("You probably don't want to be making a disconnected IPC info struct. It's only useful for local tests…");
+    pub fn new_disconnected() -> Self {
+        debug!("You probably don't want to be making a disconnected IPC info struct. It's only generally useful for local tests…");
         IPCInfo {
             parent_module: KMDBIN.to_string(),
             font: None,
