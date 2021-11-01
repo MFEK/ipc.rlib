@@ -58,10 +58,14 @@ impl<P: AsRef<Path>> InUfo<P> for P {
                     .starts_with(g)
             })
         }
-        let parent = self.as_ref().parent().unwrap();
         if is_ufo(self) {
-            Some(self.as_ref().to_path_buf())
-        } else if is_ufo(parent) {
+            return Some(self.as_ref().to_path_buf())
+        }
+        let parent = match self.as_ref().parent() {
+            Some(p) => p,
+            None => { return None },
+        };
+        if is_ufo(parent) {
             Some(parent.to_path_buf())
         } else if is_glyphs(parent) {
             parent.ufo()
