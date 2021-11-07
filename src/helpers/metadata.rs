@@ -11,9 +11,9 @@ static KMDBIN: &str = "MFEKmetadata";
 pub fn arbitrary(info: &IPCInfo, keys: &[&str]) -> Result<HashMap<String, String>, ()> {
     match &info.font.as_ref() {
         Some(ref font) => {
-            let endless_k = iter::repeat("-k");
-            let args = iter::zip(endless_k, keys.iter())
-                .map(|(e, k)| [e, k])
+            let mut endless_k = iter::repeat("-k");
+            let args = keys.iter()
+                .map(|k| [endless_k.next().unwrap(), k])
                 .flatten()
                 .collect::<Vec<_>>();
             let mut command_c = process::Command::new(KMDBIN);

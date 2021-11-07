@@ -1,5 +1,3 @@
-#![feature(iter_zip, option_result_unwrap_unchecked)]
-
 #[macro_use]
 extern crate log;
 
