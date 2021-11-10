@@ -24,9 +24,11 @@ impl Available {
     }
 }
 
+#[non_exhaustive]
 #[derive(Debug, Clone, PartialEq)]
 pub struct IPCInfo {
     pub parent_module: String,
+    pub parent_exe: PathBuf,
     pub font: Option<PathBuf>,
     pub glyph: Option<PathBuf>,
 }
@@ -74,12 +76,12 @@ impl<P: AsRef<Path>> InUfo<P> for P {
 }
 
 impl IPCInfo {
+    fn from_fields(parent_module: String, font: Option<PathBuf>, glyph: Option<PathBuf>) -> Self {
+        IPCInfo { parent_module, parent_exe: std::env::current_exe().unwrap(), font, glyph }
+    }
+
     pub fn from_font_dir(parent: String, path: &impl AsRef<Path>) -> Self {
-        IPCInfo {
-            parent_module: parent,
-            font: Some(path.as_ref().to_path_buf()),
-            glyph: None,
-        }
+        IPCInfo::from_fields(parent, Some(path.as_ref().to_path_buf()), None)
     }
 
     pub fn from_fontinfo_path(parent: String, path: &impl AsRef<Path>) -> Self {
@@ -93,11 +95,7 @@ impl IPCInfo {
                 }
             }
         };
-        IPCInfo {
-            parent_module: parent,
-            font: font,
-            glyph: Some(path.as_ref().to_path_buf()),
-        }
+        IPCInfo::from_fields(parent, font, Some(path.as_ref().to_path_buf()))
     }
 
     pub fn from_glif_path(parent: String, path: &impl AsRef<Path>) -> Self {
@@ -109,20 +107,12 @@ impl IPCInfo {
             .unwrap()
             .ufo();
 
-        IPCInfo {
-            parent_module: parent,
-            font: font,
-            glyph: Some(path.as_ref().to_path_buf()),
-        }
+        IPCInfo::from_fields(parent, font, Some(path.as_ref().to_path_buf()))
     }
 
     pub fn new_disconnected() -> Self {
         debug!("You probably don't want to be making a disconnected IPC info struct. It's only generally useful for local tests…");
-        IPCInfo {
-            parent_module: KMDBIN.to_string(),
-            font: None,
-            glyph: None,
-        }
+        IPCInfo::from_fields(KMDBIN.to_string(), None, None)
     }
 }
 
