@@ -10,18 +10,16 @@ impl<P: AsRef<Path>> InUfo<P> for P {
             let ufo = p
                 .as_ref()
                 .file_name()
-                .unwrap()
-                .to_string_lossy()
-                .to_lowercase();
+                .map(|f|f.to_string_lossy().to_lowercase())
+                .unwrap_or_else(||"".into());
             ufo.ends_with(".ufo") || ufo.ends_with(".ufo3")
         }
         fn is_glyphs<P: AsRef<Path>>(p: P) -> bool {
             ["glyphs", "glyphs."].iter().any(|g| {
                 p.as_ref()
                     .file_name()
-                    .unwrap()
-                    .to_str()
-                    .unwrap()
+                    .map(|f|f.to_str().unwrap())
+                    .unwrap_or_else(||"".into())
                     .starts_with(g)
             })
         }
