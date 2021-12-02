@@ -3,6 +3,8 @@ use log;
 use std::{env, fs};
 use std::ffi::OsString;
 use std::path::PathBuf;
+use std::process;
+use std::str as stdstr;
 
 use crate::module;
 
@@ -32,10 +34,10 @@ impl Available {
     }
 }
 
-pub fn available(module: &str) -> (Available, String) {
+pub fn available(module: &str, version: &str) -> (Available, String) {
     let mut ret = Available::No;
     let modules = module::name(module);
-    for mn in modules.iter() {
+    for mn in modules.into_iter() {
         match env::var_os("PATH") {
             Some(paths) => {
                 for path in env::split_paths(&paths) {
@@ -52,16 +54,35 @@ pub fn available(module: &str) -> (Available, String) {
                                 {
                                     use std::os::unix::fs::PermissionsExt;
                                     if md.permissions().mode() & 0o111 != 0 {
-                                        ret = Available::Yes;
+                                        ret = Available::Degraded;
                                     }
                                 }
                                 #[cfg(not(target_family = "unix"))]
                                 {
-                                    ret = Available::Yes;
+                                    ret = Available::Degraded;
                                 }
                                 log::info!("{:?} found", &pb);
 
-                                return (ret, mn.clone());
+                                let degraded = if let Ok(o) = process::Command::new(&pb).args(&["--version"]).output() {
+                                    if let Ok(data) = stdstr::from_utf8(&o.stdout).map(|d|d.trim()) {
+                                        if data == format!("{} {}", module, version) {
+                                            ret = Available::Yes;
+                                            "OK".to_string()
+                                        } else {
+                                            format!("unexpected version {}", data)
+                                        }
+                                    } else {
+                                        "no readable version information".to_string()
+                                    }
+                                } else {
+                                    "no version information".to_string()
+                                };
+
+                                if ret == Available::Degraded {
+                                    log::warn!("Got {} from MFEK{}. Your experience may be degraded. Please either update MFEK{1} or this program so that the version of MFEK{1} it expects matches. (Expected MFEK{1} {}.)", degraded, module, version);
+                                }
+
+                                return (ret, mn)
                             }
                         }
                         Err(_) => {}
