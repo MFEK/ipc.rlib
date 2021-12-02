@@ -1,6 +1,6 @@
 [package]
 name = "mfek-ipc"
-version = "0.0.0"
+version = "0.0.0-beta1"
 authors = ["Fredrick Brennan <copypaste@kittens.ph>"]
 description = "Modular Font Editor K (MFEK) inter-process communication library."
 edition = "2018"
@@ -9,6 +9,11 @@ edition = "2018"
 # Logging
 csv = "1.1"
 log = "0.4"
+# Notify
+notify = "4"
+# Serde
+serde_json = { version = "1.0" }
+serde = "1.0"
 
 [dev-dependencies]
 test-env-log = "0.2"
