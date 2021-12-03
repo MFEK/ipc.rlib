@@ -30,7 +30,7 @@ pub fn name(module: &str) -> Vec<String> {
 
 impl Available {
     pub fn assert(&self) -> bool {
-        *self == Available::Yes
+        *self == Available::Yes || *self == Available::Degraded
     }
 }
 

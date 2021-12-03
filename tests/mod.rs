@@ -5,7 +5,7 @@ use test_env_log::test;
 const KMD: &str = "metadata";
 #[test]
 fn metadata_available() {
-    let (status, name) = module_available(KMD.into());
+    let (status, name) = module_available(KMD.into(), env!("CARGO_PKG_VERSION"));
     assert!(status.assert());
     assert!(process::Command::new(name).stderr(Stdio::null()).stdout(Stdio::null()).stdin(Stdio::null()).status().is_ok());
 }
