@@ -6,6 +6,11 @@ description = "Modular Font Editor K (MFEK) inter-process communication library.
 edition = "2018"
 
 [dependencies]
+## Our crates
+# parses .glif files and gives us a place to put arbitrary data
+glifparser = { git = "https://github.com/MFEK/glifparser.rlib", branch = "master", features=["mfek"] }
+#glifparser = { path = "../glifparser.rlib", features=["mfek"] } # for development
+
 # Logging
 csv = "1.1"
 log = "0.4"

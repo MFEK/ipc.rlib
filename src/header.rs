@@ -40,7 +40,7 @@ pub fn header(module: &str) -> String {
 }
 
 pub fn display(module: &str) {
-    if atty::is(atty::Stream::Stdout) {
+    if atty::is(atty::Stream::Stderr) {
         eprint!("{}", header(module));
     }
 }
