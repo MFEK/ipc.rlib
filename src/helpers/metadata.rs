@@ -1,6 +1,5 @@
 use crate::IPCInfo;
 
-use csv;
 use glifparser::{Guideline, PointData, IntegerOrFloat::Float};
 use log;
 
@@ -31,42 +30,33 @@ pub fn arbitrary(info: &IPCInfo, keys: &[&str]) -> Result<HashMap<String, String
                 return Err(());
             }
 
-            let data = if let Ok(csvdata) = stdstr::from_utf8(&command.stdout) {
-                csvdata
+            let jsondata = if let Ok(data) = stdstr::from_utf8(&command.stdout) {
+                data
             } else {
                 log::error!("Encoding error?");
                 return Err(());
             };
 
-            let mut reader = csv::ReaderBuilder::new()
-                .has_headers(false)
-                .from_reader(data.as_bytes());
+            let rows: Vec<_> = jsondata.lines().collect();
 
-            let csvrows = if let Ok(c) = reader.records().collect::<Result<Vec<_>, _>>() {
-                c
-            } else {
-                return Err(());
-            };
+            let nrows = rows.len();
 
-            let ncsvrows = csvrows.len();
-
-            if ncsvrows != keys.len() {
+            if nrows != keys.len() {
                 if keys.len() == 0 {
                     log::warn!("Got nothing from MFEKmetadata, font corrupt?");
                 } else {
                     log::warn!(
                         "Mismatch! Got {} keys, expected {}. Aborting.",
-                        ncsvrows,
+                        nrows,
                         keys.len()
                     );
                 }
                 Err(())
             } else {
                 let mut hm: HashMap<String, String> = HashMap::new();
-                for (i, line) in csvrows.iter().enumerate() {
-                    let mut sline: Vec<String> = line.iter().map(|r| r.to_string()).collect();
-                    let s = sline.pop().unwrap();
-                    hm.insert(keys[i].to_string(), s);
+                for (i, line) in rows.iter().enumerate() {
+                    log::debug!("Got line from MFEKmetadata: {}", &line);
+                    hm.insert(keys[i].to_string(), line.to_string());
                 }
                 Ok(hm)
             }
