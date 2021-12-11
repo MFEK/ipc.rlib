@@ -61,11 +61,10 @@ pub fn available(module: &str, version: &str) -> (Available, String) {
                                 {
                                     ret = Available::Degraded;
                                 }
-                                log::info!("{:?} found", &pb);
 
                                 let degraded = if let Ok(o) = process::Command::new(&pb).args(&["--version"]).output() {
                                     if let Ok(data) = stdstr::from_utf8(&o.stdout).map(|d|d.trim()) {
-                                        if data == format!("{} {}", module, version) {
+                                        if data == format!("MFEK{} {}", module, version) {
                                             ret = Available::Yes;
                                             "OK".to_string()
                                         } else {
@@ -77,6 +76,8 @@ pub fn available(module: &str, version: &str) -> (Available, String) {
                                 } else {
                                     "no version information".to_string()
                                 };
+
+                                log::info!("{:?} found ({})", &pb, &degraded);
 
                                 if ret == Available::Degraded {
                                     log::warn!("Got {} from MFEK{}. Your experience may be degraded. Please either update MFEK{1} or this program so that the version of MFEK{1} it expects matches. (Expected MFEK{1} {}.)", degraded, module, version);
