@@ -40,6 +40,9 @@ pub fn header(module: &str) -> String {
 }
 
 pub fn display(module: &str) {
+    if let Ok(_) = std::env::var("MFEK_SUPPRESS_HEADER") {
+        return;
+    }
     if atty::is(atty::Stream::Stderr) {
         eprint!("{}", header(module));
     }
