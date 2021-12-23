@@ -23,6 +23,9 @@ figlet-rs = "0.1"
 colored = "2"
 atty = "0.2"
 
+[target.'cfg(windows)'.dependencies]
+ansi_term = "0.12" # for enable_ansi_support, convenient way to SetConsoleMode(0x0004)
+
 [dev-dependencies]
 test-log = "0.2"
 env_logger = "*"

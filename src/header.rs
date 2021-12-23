@@ -1,7 +1,11 @@
+#[cfg(target_family = "windows")]
+use ansi_term;
 use colored::Colorize as _;
 use figlet_rs::FIGfont;
 
-pub static MFEK: &str = r#"
+use std::io::{self, Write as _};
+
+static MFEK: &str = r#"
       ___           ___         ___           ___     
      /\  \         /\__\       /\__\         /|  |    
     |::\  \       /:/ _/_     /:/ _/_       |:|  |    
@@ -14,7 +18,7 @@ pub static MFEK: &str = r#"
     \:\__\        \:\__\      \::/  /       \:\__\    
      \/__/         \/__/       \/__/         \/__/    "#;
 
-pub fn header(module: &str) -> String {
+pub fn header(module: &str) -> Vec<u8> {
     let buf: String = MFEK.to_string();
     let lines: Vec<_> = buf.lines().rev().collect();
     let mfek_len = lines.len();
@@ -37,13 +41,22 @@ pub fn header(module: &str) -> String {
     .chain([String::new()])
     .collect::<Vec<String>>()
     .join("\n")
+    .as_bytes()
+    .to_owned()
 }
 
 pub fn display(module: &str) {
+    #[cfg(target_family = "windows")]
+    if let Err(e) = ansi_term::enable_ansi_support() {
+        log::warn!("Failed to enable ANSI term on Windows! error: {:?}", e);
+    }
+
     if let Ok(_) = std::env::var("MFEK_SUPPRESS_HEADER") {
         return;
     }
     if atty::is(atty::Stream::Stderr) {
-        eprint!("{}", header(module));
+        if let Err(e) = io::stderr().write(&header(module)) {
+            log::error!("Failed to write MFEK ASCII art header?? error: {:?}", e);
+        }
     }
 }
