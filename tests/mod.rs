@@ -1,15 +1,21 @@
 mod helpers;
 
+use mfek_ipc::{module, IPCInfo};
 use std::process::{self, Stdio};
-use mfek_ipc::{IPCInfo, module_available};
 use test_log::test;
 
 const KMD: &str = "metadata";
 #[test]
 fn module_available() {
-    let (status, name) = module_available(KMD.into(), env!("CARGO_PKG_VERSION"));
-    assert!(status.assert());
-    assert!(process::Command::new(name).stderr(Stdio::null()).stdout(Stdio::null()).stdin(Stdio::null()).status().is_ok());
+    let (version, path) = module::available(KMD.into(), env!("CARGO_PKG_VERSION")).unwrap();
+    assert!(version.matches());
+    eprintln!("available {:?} {:?}", &version, &path);
+    assert!(process::Command::new(path)
+        .stderr(Stdio::null())
+        .stdout(Stdio::null())
+        .stdin(Stdio::null())
+        .status()
+        .is_ok());
 }
 
 #[test]
