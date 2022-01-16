@@ -22,6 +22,8 @@ serde = "1.0"
 figlet-rs = "0.1"
 colored = "2"
 atty = "0.2"
+chrono = "0.4"
+chrono_locale = "0.1"
 
 [target.'cfg(windows)'.dependencies]
 ansi_term = "0.12" # for enable_ansi_support, convenient way to SetConsoleMode(0x0004)
@@ -29,3 +31,6 @@ ansi_term = "0.12" # for enable_ansi_support, convenient way to SetConsoleMode(0
 [dev-dependencies]
 test-log = "0.2"
 env_logger = "*"
+
+[features]
+reproducible-build = []
