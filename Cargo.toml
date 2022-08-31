@@ -18,7 +18,7 @@ glifparser = { version = "1.2", default-features = false }
 # Logging
 log = "0.4"
 # Notify
-notify = "4"
+notify = "5"
 # Serde
 serde_json = "1.0"
 serde = "1.0"
