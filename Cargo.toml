@@ -23,7 +23,8 @@ figlet-rs = "0.1"
 colored = "2"
 atty = "0.2"
 chrono = "0.4"
-chrono_locale = "0.1"
+# Can be changed back to upstream if https://github.com/chronotope/chrono/issues/899 is solved or https://github.com/Alex-PK/chrono-locale/pull/6 is merged.
+chrono_locale = { version = "0.1", git = "https://github.com/MFEK/chrono-locale.rlib" }
 
 [target.'cfg(windows)'.dependencies]
 ansi_term = "0.12" # for enable_ansi_support, convenient way to SetConsoleMode(0x0004)

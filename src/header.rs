@@ -42,7 +42,7 @@ pub fn header(module: &str) -> Vec<u8> {
 
 fn header_compiled(compiled: i64) -> String {
     let offset = chrono::Local::now();
-    let now: chrono::DateTime<chrono::Local> = offset.timezone().timestamp(compiled, 0);
+    let now: chrono::DateTime<chrono::Local> = offset.timezone().timestamp_opt(compiled, 0).unwrap();
     let now_fmt = "%Y年%m月%d日(%a)　%H時%M分%S秒(%P)　協定世界時%z";
     let date = chrono_locale::LocaleDate::formatl(&now, &now_fmt, "ja-JP").to_string();
     date.chars()
