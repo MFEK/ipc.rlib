@@ -1,4 +1,4 @@
-# MFEK IPC (inter-process communication) Library
+# MFEK IPC (inter-process communication) Library v0.0.4-beta1
 
 Modular Font Editor K (MFEK) inter-process communication library. No longer alpha, now in beta ꞵ! Yet still has an unstable API, and will remain unversioned for now.
 

@@ -1,6 +1,6 @@
 [package]
 name = "mfek-ipc"
-version = "0.0.1-beta1"
+version = "0.0.4-beta1"
 authors = ["Fredrick Brennan <copypaste@kittens.ph>"]
 description = "Modular Font Editor K (MFEK) inter-process communication library."
 edition = "2018"
