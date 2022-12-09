@@ -329,7 +329,7 @@ checksum = "3dcaa9ae7725d12cdb85b3ad99a434db70b468c09ded17e012d86b5c1010f7a7"
 [[package]]
 name = "glifparser"
 version = "1.2.4"
-source = "git+https://github.com/MFEK/glifparser.rlib?branch=master#d0b415885fd48bfd4bb54543b32696537b729c5e"
+source = "git+https://github.com/MFEK/glifparser.rlib?branch=master#353bb2e8f189ff4887ed4015d750d6eb5715eaef"
 dependencies = [
  "derivative",
  "derive_more",
