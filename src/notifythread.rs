@@ -1,5 +1,5 @@
 use log;
-use notify::{self, op as fsop, RawEvent, Watcher as _};
+use notify::{self, Event, Watcher as _, EventKind};
 
 use std::path;
 use std::sync::mpsc::{channel, Sender};
@@ -9,10 +9,10 @@ use std::thread;
 fn launch_impl(dir: path::PathBuf, tx_parent: Sender<path::PathBuf>) {
     let (tx, rx) = channel();
 
-    let mut watcher = notify::raw_watcher(tx).unwrap();
+    let mut watcher = notify::recommended_watcher(tx).unwrap();
     match watcher.watch(&dir, notify::RecursiveMode::Recursive) {
         Ok(()) => (),
-        Err(notify::Error::Io(e)) => {
+        Err(notify::Error{kind: notify::ErrorKind::Io(e), ..}) => {
             // log::error! differentiates between static str and literal str
             macro_rules! LAUNCHFAILMSG {
                 () => ("Cannot launch filesystem watch thread! {}. Won't receive important events!")
@@ -35,21 +35,24 @@ fn launch_impl(dir: path::PathBuf, tx_parent: Sender<path::PathBuf>) {
     loop {
         let recv = rx.recv();
         match recv {
-            Ok(RawEvent { path, op: Ok(fsop::CLOSE_WRITE), .. }) => {
-                if let Some(path) = path {
-                    log::info!("Filesystem write event: {:?}", path);
-                    tx_parent.send(path).unwrap();
-                } else {
+            Ok(Ok(Event { paths, kind: EventKind::Modify(_) | EventKind::Create(_), .. })) => {
+                if paths.len() <= 0 {
                     log::error!("Got a filesystem write without a path?");
                 }
+                for path in paths {
+                    log::info!("Filesystem write event: {:?}", path);
+                    tx_parent.send(path).unwrap();
+                }
             }
-            Ok(RawEvent { op: Ok(_), .. }) => {
-                log::debug!("Filesystem event: {:?}", recv)
+            Ok(Ok(event)) => {
+                log::debug!("Filesystem event: {:?}", &event)
             }
-            Ok(event) => log::error!("Broken filesystem event: {:?}", event),
+            Ok(Err(e)) => {
+                log::error!("Error in watcher!: {:?}", e)
+            }
             Err(e) => {
-                log::error!("Filesystem watcher error: {:?}. Dying…", e);
-                break;
+                log::error!("Error in recv, breaking!: {:?}", e);
+                break
             }
         }
     }
