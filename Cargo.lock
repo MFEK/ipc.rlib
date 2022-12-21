@@ -315,9 +315,9 @@ dependencies = [
 
 [[package]]
 name = "glifparser"
-version = "1.2.7"
+version = "1.2.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "23f3f0cca26ac5e5c196dcc082df7ea625355a6916951c328035234081590c97"
+checksum = "4d01cb960fd260b0eaf3528a74fd8571288d24799d961dabaaf09f14e5773c51"
 dependencies = [
  "derivative",
  "derive_more",
