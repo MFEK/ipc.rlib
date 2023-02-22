@@ -8,8 +8,8 @@ edition = "2018"
 [dependencies]
 ## Our crates
 # parses .glif files and gives us a place to put arbitrary data
-glifparser = { git = "https://github.com/MFEK/glifparser.rlib", branch = "master", default-features = false }
-#glifparser = { path = "../glifparser.rlib", default-features = false } # for development
+#glifparser = { git = "https://github.com/MFEK/glifparser.rlib", branch = "master", default-features = false }
+glifparser = { path = "../glifparser.rlib", default-features = false } # for development
 
 # Logging
 log = "0.4"

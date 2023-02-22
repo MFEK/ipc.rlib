@@ -6,7 +6,7 @@ use std::path::{Path, PathBuf};
 use crate::util::InUfo as _;
 
 #[non_exhaustive]
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Default)]
 pub struct IPCInfo {
     pub parent_module: String,
     pub parent_exe: PathBuf,
