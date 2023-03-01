@@ -1,36 +1,41 @@
 [package]
 name = "mfek-ipc"
-version = "0.0.1-beta1"
+version = "0.0.4-beta1"
 authors = ["Fredrick Brennan <copypaste@kittens.ph>"]
 description = "Modular Font Editor K (MFEK) inter-process communication library."
 edition = "2018"
+license = "Apache-2.0"
+# crates.io
+keywords = ["mfek-ipc"]
+repository = "https://github.com/MFEK/ipc.rlib"
 
 [dependencies]
 ## Our crates
 # parses .glif files and gives us a place to put arbitrary data
-#glifparser = { git = "https://github.com/MFEK/glifparser.rlib", branch = "master", default-features = false }
+#glifparser = { version = "1.2", default-features = false }
 glifparser = { path = "../glifparser.rlib", default-features = false } # for development
 
 # Logging
 log = "0.4"
 # Notify
-notify = "4"
+notify = "5"
 # Serde
-serde_json = { version = "1.0" }
+serde_json = "1.0"
 serde = "1.0"
 # Header
 figlet-rs = "0.1"
 colored = "2"
 atty = "0.2"
 chrono = "0.4"
-chrono_locale = "0.1"
+# Can be changed back to upstream if https://github.com/chronotope/chrono/issues/899 is solved or https://github.com/Alex-PK/chrono-locale/pull/6 is merged.
+chrono_locale = { version = "0.1", git = "https://github.com/MFEK/chrono-locale.rlib" }
 
 [target.'cfg(windows)'.dependencies]
 ansi_term = "0.12" # for enable_ansi_support, convenient way to SetConsoleMode(0x0004)
 
 [dev-dependencies]
+env_logger = "0.10"
 test-log = "0.2"
-env_logger = "*"
 
 [features]
 reproducible-build = []
