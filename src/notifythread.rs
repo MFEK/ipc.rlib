@@ -58,7 +58,7 @@ fn launch_impl(dir: path::PathBuf, tx_parent: Sender<path::PathBuf>) {
     }
 }
 
-pub fn launch(dir: path::PathBuf, tx: Sender<path::PathBuf>) {
+pub fn launch(dir: path::PathBuf, tx: Sender<path::PathBuf>) -> thread::JoinHandle<()> {
     log::trace!("Spawning fsnotify thread on {:?}; tx {:?}", &dir, &tx);
-    thread::spawn(|| launch_impl(dir, tx));
+    thread::spawn(|| launch_impl(dir, tx))
 }
