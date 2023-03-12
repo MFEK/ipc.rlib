@@ -12,7 +12,7 @@ repository = "https://github.com/MFEK/ipc.rlib"
 [dependencies]
 ## Our crates
 # parses .glif files and gives us a place to put arbitrary data
-glifparser = { version = "1.2", default-features = false }
+glifparser = { git = "https://github.com/MFEK/glifparser.rlib", branch = "master", default-features = false }
 #glifparser = { path = "../glifparser.rlib", default-features = false } # for development
 
 # Logging
